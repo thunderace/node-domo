@@ -1,12 +1,12 @@
 /*
-pm2 start /var/www/node-domo/serveur.js
-pm2 stop /var/www/node-domo/serveur.js
-pm2 restart /var/www/node-domo/serveur.js
-node /var/www/node-domo/serveur.js
+pm2 start /var/www/node-domo/server.js
+pm2 stop /var/www/node-domo/server.js
+pm2 restart /var/www/node-domo/server.js
+node /var/www/node-domo/server.js
 */
 
 "use strict";
-const VERSION = '29/01/2018 15:30'
+const VERSION = '29/01/2018 16:20'
 const VERSION_MSG = 'Serveur node-domo version '+VERSION
 console.log(VERSION_MSG);
 

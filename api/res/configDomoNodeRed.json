@@ -1,5 +1,5 @@
 {
-"version":"configDomoNodeRed.json 23/06/2017 1520",
+"version":"configDomoNodeRed.json 29/01/2018 16:20",
 "aliases":[
 {"id":"salon.on", "alias":"rf.a*.on"},
 {"id":"salon.off", "alias":"rf.a*.off"},
