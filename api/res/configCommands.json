@@ -1,0 +1,103 @@
+{
+  "devices": [
+    {"type": "device", "label": "Macros", "glyphicon": "cog", "commands": [
+      {"type":"command", "label": "@TV On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tvon"}, "status": {"key":"tvon"}},
+      {"type":"command", "label": "@TV Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tvoff"}, "status": {"key":"tvon"}, "break": true},
+      {"type":"command", "label": "@VP On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "vpon"}, "status": {"key":"vpon"}},
+      {"type":"command", "label": "@VP Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "vpoff"}, "status": {"key":"vpon"}, "break": true}
+    ]},
+    {"type": "device", "label": "Salon", "glyphicon": "lightbulb-o", "commands": [
+      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.on"}},
+      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.off"}, "break": true},
+      {"type":"command", "label": "1 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.1.on"}, "status": {"key":"salon.1"}},
+      {"type":"command", "label": "1 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.1.off"}, "status": {"key":"salon.1"}, "break": true},
+      {"type":"command", "label": "2 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.2.on"}, "status": {"key":"salon.2"}},
+      {"type":"command", "label": "2 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.2.off"}, "status": {"key":"salon.2"}, "break": true},
+      {"type":"command", "label": "3 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.3.on"}, "status": {"key":"salon.3"}},
+      {"type":"command", "label": "3 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.3.off"}, "status": {"key":"salon.3"}, "break": true},
+      {"type":"command", "label": "4 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.4.on"}, "status": {"key":"salon.4"}},
+      {"type":"command", "label": "4 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.4.off"}, "status": {"key":"salon.4"}, "break": true},
+      {"type":"command", "label": "5 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.5.on"}, "status": {"key":"salon.5"}},
+      {"type":"command", "label": "5 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "salon.5.off"}, "status": {"key":"salon.5"}, "break": true}
+    ]},
+    {"type": "device", "label": "Studio", "glyphicon": "lightbulb-o", "commands": [
+      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.on"}},
+      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.off"}, "break": true},
+      {"type":"command", "label": "1 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.1.on"}, "status": {"key":"studio.1"}},
+      {"type":"command", "label": "1 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.1.off"}, "status": {"key":"studio.1"}, "break": true},
+      {"type":"command", "label": "2 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.2.on"}, "status": {"key":"studio.2"}},
+      {"type":"command", "label": "2 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.2.off"}, "status": {"key":"studio.2"}, "break": true},
+      {"type":"command", "label": "3 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.3.on"}, "status": {"key":"studio.3"}},
+      {"type":"command", "label": "3 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.3.off"}, "status": {"key":"studio.3"}, "break": true},
+      {"type":"command", "label": "4 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.4.on"}, "status": {"key":"studio.4"}},
+      {"type":"command", "label": "4 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.4.off"}, "status": {"key":"studio.4"}, "break": true},
+      {"type":"command", "label": "5 On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.5.on"}, "status": {"key":"studio.5"}},
+      {"type":"command", "label": "5 Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "studio.5.off"}, "status": {"key":"studio.5"}, "break": true}
+    ]},
+    {"type": "device", "label": "Maison", "glyphicon": "home", "commands": [
+      {"type":"command", "label": "Jardin On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "jardin.on"}, "status": {"key":"jardin"}},
+      {"type":"command", "label": "Jardin Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "jardin.off"}, "status": {"key":"jardin"}, "break": true},
+      {"type":"command", "label": "Volets Bas", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "volets.on"}, "status": {"key":"volets"}},
+      {"type":"command", "label": "Volets Haut", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "volets.off"}, "status": {"key":"volets"}, "break": true}
+    ]},
+    {"type": "device", "label": "TV Salon", "glyphicon": "tv", "commands": [
+      {"type":"command", "label": "TV On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tv.on"}},
+      {"type":"command", "label": "TV Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tv.off"}},
+      {"type":"command", "label": "Mute", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tv.mute"}, "break": true},
+      {"type":"command", "label": "HDMI 1", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tv.entree.hdmi1"}},
+      {"type":"command", "label": "HDMI 2", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tv.entree.hdmi2"}},
+      {"type":"command", "label": "HDMI 3", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tv.entree.hdmi3"}, "break": true},
+      {"type":"command", "label": "Vol0", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "tv.vol0"}, "break": true}
+    ]},
+    {"type": "device", "label": "VP Salon", "glyphicon": "tv", "commands": [
+      {"type":"command", "label": "VP On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "vpsalon.on"}},
+      {"type":"command", "label": "VP Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "vpsalon.off"}, "break": true},
+      {"type":"command", "label": "Ecran Haut", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "ecran.haut"}},
+      {"type":"command", "label": "Ecran Bas", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "ecran.bas"}, "break": true}
+    ]},
+    {"type": "device", "label": "VP Studio", "glyphicon": "tv", "commands": [
+      {"type":"command", "label": "VP On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "vpstudio.on"}},
+      {"type":"command", "label": "VP Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "vpstudio.off"}, "break": true}
+    ]},
+    {"type": "device", "label": "Ampli Salon", "glyphicon": "tv", "commands": [
+      {"type":"command", "label": "Ampli On", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "ampli.on"}},
+      {"type":"command", "label": "Ampli Off", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "ampli.off"}, "break": true},
+      {"type":"command", "label": "V+", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "ampli.volp"}},
+      {"type":"command", "label": "V-", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "ampli.volm"}},
+      {"type":"command", "label": "Mute", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "ampli.mute"}, "break": true}
+    ]},
+    {"type": "device", "label": "Ampli Studio", "glyphicon": "tv", "commands": [
+      {"type":"command", "label": "V+", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "preamp.volp"}},
+      {"type":"command", "label": "V-", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "preamp.volm"}},
+      {"type":"command", "label": "Mute", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "preamp.mute"}, "break": true}
+    ]},
+    {"type": "device", "label": "HDMI", "glyphicon": "tv", "commands": [
+      {"type":"command", "label": "1", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "hdmi.1"}},
+      {"type":"command", "label": "2", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "hdmi.2"}},
+      {"type":"command", "label": "3", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "hdmi.3"}},
+      {"type":"command", "label": "4", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "hdmi.4"}},
+      {"type":"command", "label": "5", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "hdmi.5"}, "break": true}
+    ]},
+    {"type": "device", "label": "SonOff01", "glyphicon": "server", "commands": [
+      {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "version"}, "break": true},
+      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "on"}},
+      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "off"}},
+      {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "toggle"}, "break": true},
+      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/OTA", "payload": "http://raffault.free.fr/ESPIR.ino.bin"}, "break": true}
+    ]},
+    {"type": "device", "label": "SonOff02", "glyphicon": "server", "commands": [
+      {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "version"}, "break": true},
+      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "on"}},
+      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "off"}},
+      {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "toggle"}, "break": true},
+      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/OTA", "payload": "http://raffault.free.fr/ESPIR.ino.bin"}, "break": true}
+    ]},
+    {"type": "device", "label": "ESPIR01", "glyphicon": "server", "commands": [
+      {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "version"}, "break": true},
+      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "on"}},
+      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "off"}},
+      {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "toggle"}, "break": true},
+      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/OTA", "payload": "http://raffault.free.fr/ESPIR.ino.bin"}, "break": true}
+    ]}
+  ]
+}
