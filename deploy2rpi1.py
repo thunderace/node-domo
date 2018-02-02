@@ -14,7 +14,7 @@ def copyDirToFtp(ftp, localDir, remoteDir):
         print(f)
         filePath = os.path.join(localDir, f)
         if os.path.isdir(filePath):
-          if not filePath.endswith(".git"):
+          if not filePath.endswith(".git") and not filePath.endswith("node_modules"):
             ftp.cwd(remoteDir)
             #ftp.mkd(f);
             copyDirToFtp(ftp, filePath, remoteDir+"/"+f)

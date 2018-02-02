@@ -547,7 +547,9 @@ const MQTT_NODEDOMO = 'home/domo/nodedomo'
 const MQTT_NODEDOMOCMD = 'home/domo/nodedomo/cmd'
 const MQTT_NODEDOMOLOG = 'home/domo/log/nodedomo'
 const MQTT_NODEDOMOTVLG = 'home/domo/nodedomo/tvlg'
-var client  = mqtt.connect(MQTT_URL);
+
+var client = mqtt.connect(MQTT_URL, {clientId: 'NodejsDomoServer'});
+//var client = mqtt.connect(MQTT_URL);
 
 client.on('connect', function () {
 	console.log("Connected to mqtt server "+MQTT_URL);
