@@ -22,6 +22,11 @@ var http = require('http');
 var configNodejsDomo = "configNodejsDomo.json"
 
 
+var test = require('./modules/test-module.js');
+
+test.testFunction();
+
+
 // Init ---------------------------------------------
 app.use(compression()); 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -241,90 +246,6 @@ bot.action(/.+/, (ctx) => {
   }
   return ctx.answerCbQuery(`Commande ${ctx.match[0]} inconnue`)
 })
-
-/*
-// Examples start
-bot.command('onetime', ({ reply }) =>
-  reply('One time keyboard', Markup
-    .keyboard(['/simple', '/inline', '/pyramid'])
-    .oneTime()
-    .resize()
-    .extra()
-  )
-)
-
-bot.command('custom', ({ reply }) => {
-  return reply('Custom buttons keyboard', Markup
-    .keyboard([
-      ['ðŸ” Search', 'ðŸ˜Ž Popular'], // Row1 with 2 buttons
-      ['â˜¸ Setting', 'ðŸ“ž Feedback'], // Row2 with 2 buttons
-      ['ðŸ“¢ Ads', 'â­ï¸ Rate us', 'ðŸ‘¥ Share'] // Row3 with 3 buttons
-    ])
-    .oneTime()
-    .resize()
-    .extra()
-  )
-})
-
-bot.hears('ðŸ” Search', ctx => ctx.reply('Yay!'))
-bot.hears('ðŸ“¢ Ads', ctx => ctx.reply('Free hugs. Call now!'))
-
-bot.command('special', (ctx) => {
-  return ctx.reply('Special buttons keyboard', Extra.markup((markup) => {
-    return markup.resize()
-      .keyboard([
-        markup.contactRequestButton('Send contact'),
-        markup.locationRequestButton('Send location')
-      ])
-  }))
-})
-
-bot.command('pyramid', (ctx) => {
-  return ctx.reply('Keyboard wrap', Extra.markup(
-    Markup.keyboard(['one', 'two', 'three', 'four', 'five', 'six'], {
-      wrap: (btn, index, currentRow) => currentRow.length >= (index + 1) / 2
-    })
-  ))
-})
-
-bot.command('simple', (ctx) => {
-  return ctx.replyWithHTML('<b>Coke</b> or <i>Pepsi?</i>', Extra.markup(
-    Markup.keyboard(['Coke', 'Pepsi'])
-  ))
-})
-
-bot.command('inline', (ctx) => {
-  return ctx.reply('<b>Coke</b> or <i>Pepsi?</i>', Extra.HTML().markup((m) =>
-    m.inlineKeyboard([
-      m.callbackButton('Coke', 'Coke'),
-      m.callbackButton('Pepsi', 'Pepsi')
-    ])))
-})
-
-bot.command('random', (ctx) => {
-  return ctx.reply('random example',
-    Markup.inlineKeyboard([
-      Markup.callbackButton('Coke', 'Coke'),
-      Markup.callbackButton('Dr Pepper', 'Dr Pepper', Math.random() > 0.5),
-      Markup.callbackButton('Pepsi', 'Pepsi')
-    ]).extra()
-  )
-})
-
-bot.hears(/\/wrap (\d+)/, (ctx) => {
-  return ctx.reply('Keyboard wrap', Extra.markup(
-    Markup.keyboard(['one', 'two', 'three', 'four', 'five', 'six'], {
-      columns: parseInt(ctx.match[1])
-    })
-  ))
-})
-
-bot.action('Dr Pepper', (ctx, next) => {
-  return ctx.reply('ðŸ‘').then(() => next())
-})
-// Examples end
-*/
-
 
 bot.startPolling();
 
@@ -548,8 +469,8 @@ const MQTT_NODEDOMOCMD = 'home/domo/nodedomo/cmd'
 const MQTT_NODEDOMOLOG = 'home/domo/log/nodedomo'
 const MQTT_NODEDOMOTVLG = 'home/domo/nodedomo/tvlg'
 
-var client = mqtt.connect(MQTT_URL, {clientId: 'NodejsDomoServer'});
-//var client = mqtt.connect(MQTT_URL);
+//var client = mqtt.connect(MQTT_URL, {clientId: 'NodejsDomoServer'});
+var client = mqtt.connect(MQTT_URL);
 
 client.on('connect', function () {
 	console.log("Connected to mqtt server "+MQTT_URL);
@@ -818,7 +739,27 @@ app.post("/api/configdomo", function(req,res) {
   res.send(); 
 }); 
 
-// logs mqtt
+// post mqtt
+app.post("/api/mqtt", function(req, res) { 
+  try {
+    var topic = req.query.topic;
+    var payload = req.query.payload;
+    
+    if (topic != undefined && payload != undefined) {
+      client.publish(topic, payload);
+      res.send("ok");
+    }
+    else {
+      res.send("topic or payload parameters missing");
+    }
+  }
+  catch(ex) {
+    console.log("(api /api/mqtt) exception "+ex);
+    res.send("exception");
+  }
+}); 
+
+
 app.get("/api/mqtts", function(req, res) { 
   getListeOMBdd("domo", "mqtt", "*", req, res, "ORDER BY date DESC LIMIT 200");
 }); 
@@ -860,7 +801,7 @@ app.get("/api/edf1", function(req, res) {
     getListeOMBdd("teleinfo", "teleinfo", "time, PAPP", req, res, condition);
   }
   catch(ex) {
-    console.log("(api /api/status) exception "+ex);
+    console.log("(api /api/edf1) exception "+ex);
     res.send("exception");
   }
 }); 
