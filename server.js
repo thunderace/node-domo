@@ -15,17 +15,17 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var app = express(); 
 var fs = require('fs');
-var mysql = require('mysql');
+//var mysql = require('mysql');
 var moment = require('moment');
 var http = require('http');
 
+
+//TODO CONST
 var configNodejsDomo = "configNodejsDomo.json"
 
-
-var test = require('./modules/test-module.js');
-
-test.testFunction();
-
+var dbService = require('./modules/db.service.js');
+var domoService = require('./modules/domo.service.js');
+var telegramService = require('./modules/telegram.service.js');
 
 // Init ---------------------------------------------
 app.use(compression()); 
@@ -43,6 +43,7 @@ app.use(function (req, res, next) {
 });
 
 
+/*
 // Telegram Bot --------------------------------------------------
 const token = '462682835:AAHRlPRSZosdvazBacJyG1YNDwb43VA_svw';
 
@@ -64,7 +65,7 @@ bot.on('sticker', (ctx) => ctx.reply('ðŸ‘'))
 
 bot.hears(/cmd (.+)/, ({ match, reply }) => {
   var cmd=match[1];
-  runCommand({"type":"cmdCommand","id":cmd});
+  domoService.runCommand({"type":"cmdCommand","id":cmd});
   reply("Execution commande "+cmd+" ok");
 })
 
@@ -241,7 +242,7 @@ bot.action(/.+/, (ctx) => {
   }
   if (resp.indexOf("/cmd ")>-1) {
     var cmd=resp.split(" ")[1];
-    runCommand({"type":"cmdCommand","id":cmd});
+    domoService.runCommand({"type":"cmdCommand","id":cmd});
     return ctx.answerCbQuery("Execution commande "+cmd+" ok")
   }
   return ctx.answerCbQuery(`Commande ${ctx.match[0]} inconnue`)
@@ -249,7 +250,8 @@ bot.action(/.+/, (ctx) => {
 
 bot.startPolling();
 
-
+*/
+/*
 // Commands ---------------------------------------------
 var configdomo = {};
 
@@ -331,7 +333,6 @@ function findTriggerMqtt(topic, payload) {
 		var payload1 = payload.replace(/\"/g, "'");
 		for(var i=0; i<configdomo.triggers.length; i++) {
 			if ((topic == null || configdomo.triggers[i].topic == topic)) {
-				//console.log("findTriggerMqtt: topic found "+topic+" "+payload1+" "+configdomo.triggers[i].payload);
         if (configdomo.triggers[i].payload == "*" || configdomo.triggers[i].payload == payload || configdomo.triggers[i].payload == payload1) {
           trigger = configdomo.triggers[i];
 			    console.log(">> trigger found: ["+trigger.command.id+"]");
@@ -340,9 +341,7 @@ function findTriggerMqtt(topic, payload) {
           if (lastMessages.length>0) { // && trigger.debounce
             for(var j=0;j<lastMessages.length && trigger;j++) {
               var lastMessage = lastMessages[j];
-              //console.log(">> lastMessage=["+lastMessage.message.topic+","+lastMessage.message.payload+"]");
               if (lastMessage.message.topic == topic && lastMessage.message.payload == payload) {
-                //console.log(">> lastMessage found");
                 var t = t1-lastMessage.date;
                 if (trigger.debounce) {
                   if (t<trigger.debounce) {
@@ -374,8 +373,6 @@ var mapStatus = new Map();
 function setStatus(id, value) {
 	mapStatus.set(id, value); 
   var msg = "setStatus "+id+"="+value;
-	//console.log(msg);
-  //client.publish(MQTT_NODEDOMOLOG, msg);
 }
 
 function getStatus(id) {
@@ -458,6 +455,7 @@ function runCommands(commands) {
 		runCommand(command);
 	}	
 }
+*/
 
 // MQTT ---------------------------------------------
 // 82.66.49.29:1880/mqtt?topic=home/domo/nodedomo/cmd&payload=macro.test2
@@ -472,6 +470,10 @@ const MQTT_NODEDOMOTVLG = 'home/domo/nodedomo/tvlg'
 //var client = mqtt.connect(MQTT_URL, {clientId: 'NodejsDomoServer'});
 var client = mqtt.connect(MQTT_URL);
 
+domoService.init(__dirname + "/api/res/" + configNodejsDomo, client);
+telegramService.init(client, domoService);
+
+
 client.on('connect', function () {
 	console.log("Connected to mqtt server "+MQTT_URL);
   client.subscribe(MQTT_DOMO+'#');
@@ -485,7 +487,7 @@ client.on('message', function (topic, message) {
 	// cmd
 	if (topic.toString().indexOf(MQTT_NODEDOMOCMD)>=0) { 
 		console.log("MQTT exec [" + message.toString()+"]");
-		runCommand({"type":"cmdCommand","id":message.toString()});
+		domoService.runCommand({"type":"cmdCommand","id":message.toString()});
 		return;
 	}
 	if (topic.toString().indexOf(MQTT_NODEDOMOTVLG)>=0) { 
@@ -495,12 +497,13 @@ client.on('message', function (topic, message) {
 	}
 	
 	// trigger
-	var trigger = findTriggerMqtt(topic.toString(), message.toString());
+	var trigger = domoService.findTriggerMqtt(topic.toString(), message.toString());
 	if (trigger != null) {
 		console.log("exec trigger " + message.toString());
-		runCommand(trigger.command);
+		domoService.runCommand(trigger.command);
 	}
 });
+
 
 // LGTV ---------------------------------------------
 // LGwebOSTV B4:E6:2A:38:31:46 192.168.0.42
@@ -564,7 +567,6 @@ lgtv.on('close', function () {
 // "ssap://tv/getExternalInputList"
 // <--- received: {"type":"response","id":"input_1","payload": {"devices":[{"id":"SCART_1","label":"AV1","port":1,"appId":"com.webos.app.externalinput.scart","icon":"http://lgsmarttv.lan:3000/resources/f84946f3119c23cda549bdcf6ad02a89c73f7682/scart.png","modified":false,"autoav":false,"currentTVStatus":"","subList":[],"subCount":0,"connected":false,"favorite":false},{...}, {...}],"returnValue":true}}
 // "ssap://tv/switchInput", {inputId: input}
-
 function execCmdLgTv(cmd) {
  	try {
     if (cmd == "system/turnOn") {
@@ -599,6 +601,42 @@ function sendCmdLgTv(cmd, res) {
   res.send({content:msg});
 }
 
+
+
+// api
+app.use("/api", express.static(__dirname + "/api"));
+// Arborescence app
+app.use("/", express.static(__dirname + "/app"));
+
+// Site Web ----------------------------------------
+// index.html
+app.get("/", function (req, res) { 
+  console.log("get('/'): index.html");
+  res.sendFile(__dirname + "/app/index.html"); 
+}); 
+
+// API ---------------------------------------------
+
+// api commandes
+// draffault.fr:8888/api/cmd?cmd=salon.1.on
+// draffault.fr:8888/api/cmd?cmd=salon.1.off
+app.get("/api/cmd", function(req, res, next) {
+  try {
+    var cmd = req.query.cmd;
+    if (cmd == undefined) { 
+      console.log("(api /api/cmd) Erreur: pas de parametre cmd");
+    } else {
+      console.log("(api /api/cmd) exec cmd"+cmd);
+      domoService.runCommand({"type":"cmdCommand","id":cmd});
+      res.send({"result":"ok"});
+    }
+  }
+  catch(ex) {
+    console.log("(api /api/cmd) exception "+ex);
+    res.send("exception");
+  }
+});
+
 // api lgtv
 // draffault.fr:8888/api/lgtv?cmd=system/turnOn
 // draffault.fr:8888/api/lgtv?cmd=system/turnOff
@@ -611,30 +649,10 @@ app.get("/api/lgtv", function(req, res, next) {
 	}
 });
 
-// api commandes ---------------------------------------------
-// draffault.fr:8888/api/cmd?cmd=salon.1.on
-// draffault.fr:8888/api/cmd?cmd=salon.1.off
-app.get("/api/cmd", function(req, res, next) {
-  try {
-    var cmd = req.query.cmd;
-    if (cmd == undefined) { 
-      console.log("(api /api/cmd) Erreur: pas de parametre cmd");
-    } else {
-      console.log("(api /api/cmd) exec cmd"+cmd);
-      runCommand({"type":"cmdCommand","id":cmd});
-      res.send({"result":"ok"});
-    }
-  }
-  catch(ex) {
-    console.log("(api /api/cmd) exception "+ex);
-    res.send("exception");
-  }
-});
-
-// api states ---------------------------------------------
+// api states
 // draffault.fr:8888/api/statuses
 app.get("/api/statuses", function(req, res, next) {
-  var r = JSON.stringify([...mapStatus.entries()]); 
+  var r = JSON.stringify([...domoService.getMapStatus().entries()]); 
   //client.publish(MQTT_NODEDOMOLOG, "Statuses:"+r);
   res.send(r);
 });
@@ -673,58 +691,6 @@ app.get("/api/status", function(req, res, next) {
   }
 });
 
-// api
-app.use("/api", express.static(__dirname + "/api"));
-// Arborescence app
-app.use("/", express.static(__dirname + "/app"));
-
-// Site Web ----------------------------------------
-// index.html
-app.get("/", function (req, res) { 
-  console.log("get('/'): index.html");
-  res.sendFile(__dirname + "/app/index.html"); 
-}); 
-
-// API ---------------------------------------------
-// Bdd
-function getConnectionBdd(bdd) {
-  var connection = mysql.createConnection({
-    host     : "localhost",
-    user     : bdd,
-    password : bdd,
-    database : bdd
-  });
-  return connection;
-}
-
-// RequÃªte BDD et renvoi des donnÃ©es
-function getListeOMBdd(bdd, nomOM, champs, req, res, condition) {
-  var t1 = Date.now();
-  console.log("Execution getListeOMBdd ["+nomOM+"]");
-  var connection = getConnectionBdd(bdd);
-  connection.connect();
-  var query = "SELECT "+champs+" FROM "+nomOM;
-  if (condition != undefined && condition != "") {
-    query+=" "+condition;
-  }
-  connection.query(query, function(err, rows, fields) {
-    if (!err) {
-      var t2 = Date.now();
-      var dt1 = t2-t1;
-      res.json(rows);
-      var t3 = Date.now();
-      var dt2 = t3-t2;
-      var dt3 = t3-t1;
-      console.log("Execution requete ["+query+"] ok (total = "+dt3+" ms, requête en "+dt1+" ms)");
-    }
-    else {
-      console.log("Erreur execution requete ["+query+"]");
-      res.send(); 
-    }
-  });
-  connection.end();  
-}
-
 // configdomo
 app.post("/api/configdomo", function(req,res) { 
   var data = req.body;
@@ -759,9 +725,9 @@ app.post("/api/mqtt", function(req, res) {
   }
 }); 
 
-
+// mqtts
 app.get("/api/mqtts", function(req, res) { 
-  getListeOMBdd("domo", "mqtt", "*", req, res, "ORDER BY date DESC LIMIT 200");
+  dbService.getBOFromDB("domo", "mqtt", "*", req, res, "ORDER BY date DESC LIMIT 200");
 }); 
 
 // edf
@@ -773,7 +739,7 @@ app.get("/api/edf/:duree", function(req, res) {
   var datedebuts = moment(datedebut).format("YYYY-MM-DD HH:mm");
   var condition = "WHERE time>='"+datedebuts+"' ORDER BY time DESC";
   console.log("RÃ©cupÃ©ration donnÃ©es edf dÃ©but="+datedebuts+" durÃ©e="+duree+"h");
-  getListeOMBdd("teleinfo", "teleinfo", "time, PAPP", req, res, condition);
+  dbService.getBOFromDB("teleinfo", "teleinfo", "time, PAPP", req, res, condition);
 }); 
 
 
@@ -798,7 +764,7 @@ app.get("/api/edf1", function(req, res) {
     
     console.log("RÃ©cupÃ©ration donnÃ©es edf dÃ©but="+datedebuts+" fin="+datefins+" durÃ©e="+duree+"h");
     var condition = "WHERE time>='"+datedebuts+"' AND time<='"+datefins+"' ORDER BY time DESC";
-    getListeOMBdd("teleinfo", "teleinfo", "time, PAPP", req, res, condition);
+    dbService.getBOFromDB("teleinfo", "teleinfo", "time, PAPP", req, res, condition);
   }
   catch(ex) {
     console.log("(api /api/edf1) exception "+ex);
@@ -821,7 +787,7 @@ app.get("/api/mesure", function(req, res) {
   if (nom != undefined) { condition = condition + "AND nom LIKE '"+nom+"' ";}
   condition = condition + "ORDER BY date DESC";
   console.log("RÃ©cupÃ©ration donnÃ©es edf dÃ©but="+datedebuts+" durÃ©e="+duree+"h");
-  getListeOMBdd("domo", "mesure", "*", req, res, condition);
+  dbService.getBOFromDB("domo", "mesure", "*", req, res, condition);
 }); 
 
 app.listen(8888);
