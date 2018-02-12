@@ -17,7 +17,6 @@ function logMqtt(msg) {
   }
 }
 
-
 // Telegram Bot --------------------------------------------------
 const token = '462682835:AAHRlPRSZosdvazBacJyG1YNDwb43VA_svw';
 

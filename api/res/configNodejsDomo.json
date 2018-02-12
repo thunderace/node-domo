@@ -115,7 +115,7 @@
   {"label":"TV LG", "commands":[
 		{"id":"tvlg.on", "label":"TV On", "type":"cmdMqtt", "topic":"home/domo/espIR01/cmd", "payload":"irsend nec 20DF23DC", "setStatus": [{"key":"tv","value":1}]},
 		{"id":"tvlg.off", "label":"TV Off", "type":"cmdMqtt", "topic":"home/domo/espIR01/cmd", "payload":"irsend nec 20DFA35C", "setStatus": [{"key":"tv","value":0}]},
-    {"id":"tvlg.volume0", "label":"TV Vol=0", "type":"cmdMqtt", "topic":"home/domo/nodedomo/tvlg", "payload":"volume0"},
+    {"id":"tvlg.vol0", "label":"TV Vol=0", "type":"cmdMqtt", "topic":"home/domo/nodedomo/tvlg", "payload":"volume0"},
     {"id":"tvlg.mute", "label":"TV Mute", "type":"cmdMqtt", "topic":"home/domo/espIR01/cmd", "payload":"irsend nec 20DFA35C"},
     {"id":"tvlg.mute.on", "label":"TV Mute", "type":"cmdMqtt", "topic":"home/domo/nodedomo/tvlg", "payload":"mute.on", "setStatus": [{"key":"tv.mute","value":1}]},
     {"id":"tvlg.mute.off", "label":"TV Mute", "type":"cmdMqtt", "topic":"home/domo/nodedomo/tvlg", "payload":"mute.off", "setStatus": [{"key":"tv.mute","value":0}]},

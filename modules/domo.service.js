@@ -8,10 +8,10 @@ var lastMessages = [];
 const MQTT_NODEDOMOLOG = 'home/domo/log/nodedomo';
 var client;
 
-function init(configNodejsDomo, mqttClient) {
+function init(configFileName, mqttClient) {
   configdomo = {};    
   client = mqttClient;
-  initConfigDomo(configNodejsDomo);
+  initConfigDomo(configFileName);
 }
 
 function logMqtt(msg) {  
@@ -22,8 +22,7 @@ function logMqtt(msg) {
   }
 }
 
-function initConfigDomo(configNodejsDomo) {
-  var configFileName = configNodejsDomo; //__dirname + "/../api/res/" + configNodejsDomo;
+function initConfigDomo(configFileName) {
   loadConfigDomo(configFileName);
   
   fs.watchFile(configFileName, (curr, prev) => {
@@ -84,7 +83,7 @@ function findCommand(id) {
   return null;
 }
 
-// Find a trigger mqtt
+// Find an mqtt trigger with debounce
 function findTriggerMqtt(topic, payload) {
   var trigger = null;
   var t1 = Date.now();
@@ -124,7 +123,6 @@ function findTriggerMqtt(topic, payload) {
 			}
 		}
 	}
-  // clean lastMessages and add lastMessage
   while (lastMessages.length>30) {
     lastMessages.shift();
   }
@@ -150,7 +148,6 @@ function toggleStatus(id) {
 	return v;
 }
 
-// Command execution
 function runCommand(command, logMqtt=true) {
 	try {
 		if (command == null) { return; }
