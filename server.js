@@ -50,6 +50,10 @@ client.on('connect', function () {
 client.on('message', function (topic, message) {
 	if (message.toString().lastIndexOf('wdmqtt')>=0) { return; }
   console.log("MQTT "+topic.toString() + " "+ message.toString());
+  
+  // bdd log
+  var query = "INSERT INTO `domo`.`mqtt` (`topic`,`payload`) VALUES ('"+topic.toString()+"', '"+message.toString()+"');";
+  dbService.execDBQuery("domo", query, null, null);
 	
 	// cmd
 	if (topic.toString().indexOf(MQTT_NODEDOMOCMD)>=0) { 
@@ -64,7 +68,7 @@ client.on('message', function (topic, message) {
 	}
 	
 	// trigger
-	var trigger = domoService.findTriggerMqtt(topic.toString(), message.toString());
+	var trigger = domoService.findMqttTrigger(topic.toString(), message.toString());
 	if (trigger != null) {
 		console.log("exec trigger " + message.toString());
 		domoService.runCommand(trigger.command);

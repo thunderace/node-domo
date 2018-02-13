@@ -35,7 +35,6 @@ function loadConfigDomo(configFileName) {
     if (err) {
       console.log(err);
     } else {
-      console.log(msg);
       var msg;
       try {
         configdomo = JSON.parse(data);
@@ -84,7 +83,7 @@ function findCommand(id) {
 }
 
 // Find an mqtt trigger with debounce
-function findTriggerMqtt(topic, payload) {
+function findMqttTrigger(topic, payload) {
   var trigger = null;
   var t1 = Date.now();
   var i = payload.toString().indexOf(" FreeMem");
@@ -130,6 +129,7 @@ function findTriggerMqtt(topic, payload) {
   return trigger;
 }
 
+// Statuses
 function setStatus(id, value) {
 	mapStatus.set(id, value); 
   var msg = "setStatus "+id+"="+value;
@@ -148,9 +148,11 @@ function toggleStatus(id) {
 	return v;
 }
 
+// Commands
 function runCommand(command, logMqtt=true) {
 	try {
-		if (command == null) { return; }
+		if (command == undefined || command == null) { return; }
+    
     if (logMqtt) { 
       client.publish(MQTT_NODEDOMOLOG, "Exec command: "+command.id); 
     }
@@ -206,7 +208,6 @@ function runCommand(command, logMqtt=true) {
 	}
 }
 
-// Commands execution
 function runCommands(commands) {
 	if (commands == undefined) { return; }
   for(var i=0; i<commands.length; i++) {
@@ -225,7 +226,7 @@ module.exports = {
   loadConfigDomo: loadConfigDomo,
   runCommand: runCommand,
   runCommands: runCommands,
-  findTriggerMqtt: findTriggerMqtt,
+  findMqttTrigger: findMqttTrigger,
   findCommand: findCommand,
   getMapStatus: getMapStatus,
 }
