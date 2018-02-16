@@ -19,12 +19,12 @@ var domoService = require('./modules/domo.service.js');
 var telegramService = require('./modules/telegram.service.js');
 var lgtvService = require('./modules/lgtv.service.js');
 
-
+var serverId = "node-domo-server-"+new Date().getTime(); 
 const VERSION = '29/01/2018 16:20'
-const VERSION_MSG = 'Serveur node-domo version '+VERSION
+var versionMsg = 'Serveur '+serverId+' '+VERSION
 const CONFIG_FILENAME = "configNodejsDomo.json"
 
-console.log(VERSION_MSG);
+console.log(versionMsg);
 
 
 // MQTT ---------------------------------------------
@@ -33,10 +33,13 @@ var mqtt = require('mqtt');
 
 const MQTT_URL = 'http://82.66.49.29:1883';
 const MQTT_DOMO = 'home/domo/'
-const MQTT_NODEDOMO = 'home/domo/nodedomo'
-const MQTT_NODEDOMOCMD = 'home/domo/nodedomo/cmd'
-const MQTT_NODEDOMOLOG = 'home/domo/log/nodedomo'
-const MQTT_NODEDOMOTVLG = 'home/domo/nodedomo/tvlg'
+const MQTT_NODE_DOMO = 'home/domo/nodedomo'
+const MQTT_NODE_DOMO_CMD = 'home/domo/nodedomo/cmd'
+const MQTT_NODE_DOMO_LOG = 'home/domo/log/nodedomo'
+const MQTT_NODE_DOMO_TVLG = 'home/domo/nodedomo/tvlg'
+
+const MQTT_NODE_DOMO_INV_CMD = 'home/domo/inventory/cmd'
+const MQTT_NODE_DOMO_INV_RES = 'home/domo/inventory/res'
 
 //var client = mqtt.connect(MQTT_URL, {clientId: 'NodejsDomoServer'});
 var client = mqtt.connect(MQTT_URL);
@@ -44,7 +47,7 @@ var client = mqtt.connect(MQTT_URL);
 client.on('connect', function () {
 	console.log("Connected to mqtt server "+MQTT_URL);
   client.subscribe(MQTT_DOMO+'#');
-  client.publish(MQTT_NODEDOMOLOG, 'Node domo server started '+VERSION);
+  client.publish(MQTT_NODE_DOMO_LOG, 'Node domo server started '+VERSION);
 });
  
 client.on('message', function (topic, message) {
@@ -56,14 +59,35 @@ client.on('message', function (topic, message) {
   dbService.execDBQuery("domo", query, null, null);
 	
 	// cmd
-	if (topic.toString().indexOf(MQTT_NODEDOMOCMD)>=0) { 
+	if (topic.toString().indexOf(MQTT_NODE_DOMO_CMD)>=0) { 
 		console.log("MQTT exec [" + message.toString()+"]");
 		domoService.runCommand({"type":"cmdCommand","id":message.toString()});
 		return;
 	}
-	if (topic.toString().indexOf(MQTT_NODEDOMOTVLG)>=0) { 
+	if (topic.toString().indexOf(MQTT_NODE_DOMO_TVLG)>=0) { 
 		console.log("MQTT exec TVLG [" + message.toString()+"]");
 		lgtvService.execCmdLgTv(message.toString());
+		return;
+	}
+	// inventory
+	if (topic.toString().indexOf(MQTT_NODE_DOMO_INV_CMD)>=0) { 
+		console.log("MQTT inventory cmd");
+    var s = '{';
+    s += '"id": "'+serverId+'", ';
+    s += '"version": "'+VERSION+'", ';
+    s += '"mqttUrl": "'+MQTT_NODE_DOMO_CMD+'", ';
+    s += '"status": "OK", ';
+    s += '"commands": [';
+    s += '{"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "version"}},';
+    s += '{"type":"command", "label": "Inventaire", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "inventory"}}';
+    s += ']';
+    s += '}';
+    client.publish(MQTT_NODE_DOMO_INV_RES, s);
+		return;
+	}
+	if (topic.toString().indexOf(MQTT_NODE_DOMO_INV_RES)>=0) { 
+		console.log("MQTT inventory response" + message.toString());
+    domoService.saveInventory(JSON.parse(message.toString()));
 		return;
 	}
 	
@@ -145,7 +169,7 @@ app.get("/api/lgtv", function(req, res, next) {
 // draffault.fr:8888/api/statuses
 app.get("/api/statuses", function(req, res, next) {
   var r = JSON.stringify([...domoService.getMapStatus().entries()]); 
-  //client.publish(MQTT_NODEDOMOLOG, "Statuses:"+r);
+  //client.publish(MQTT_NODE_DOMO_LOG, "Statuses:"+r);
   res.send(r);
 });
 
@@ -276,10 +300,18 @@ app.get("/api/mesure", function(req, res) {
   dbService.getBOFromDB("domo", "mesure", "*", req, res, condition);
 }); 
 
+// api devices
+// draffault.fr:8888/api/devices
+app.get("/api/devices", function(req, res, next) {
+  var r = JSON.stringify([...domoService.getMapDevices().entries()]); 
+  res.send(r);
+});
+
 // App services
-domoService.init(__dirname + "/api/res/" + CONFIG_FILENAME, client);
+domoService.init(__dirname + "/api/res/" + CONFIG_FILENAME, client, versionMsg);
 telegramService.init(client, domoService);
 lgtvService.init(client);
+
 
 // Server start
 app.listen(8888);

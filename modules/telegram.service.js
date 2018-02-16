@@ -1,5 +1,5 @@
 // mqtt
-const MQTT_NODEDOMOLOG = 'home/domo/log/nodedomo';
+const MQTT_NODE_DOMO_LOG = 'home/domo/log/nodedomo';
 var client;
 var domoService;
 
@@ -11,7 +11,7 @@ function init(mqttClient, pDomoService) {
 
 function logMqtt(msg) {  
   if (client) {
-    client.publish(MQTT_NODEDOMOLOG, msg); 
+    client.publish(MQTT_NODE_DOMO_LOG, msg); 
   } else {
     console.log("ERROR: client is null");
   }

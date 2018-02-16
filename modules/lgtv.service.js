@@ -1,5 +1,5 @@
 // mqtt
-const MQTT_NODEDOMOLOG = 'home/domo/log/nodedomo';
+const MQTT_NODE_DOMO_LOG = 'home/domo/log/nodedomo';
 var client;
 
 var wol = require("node-wol");
@@ -14,7 +14,7 @@ function init(mqttClient) {
 
 function logMqtt(msg) {  
   if (client) {
-    client.publish(MQTT_NODEDOMOLOG, msg); 
+    client.publish(MQTT_NODE_DOMO_LOG, msg); 
   } else {
     console.log("ERROR: client is null");
   }
@@ -40,24 +40,24 @@ lgtv.on('error', function (err) {
 
 lgtv.on('connect', function () {
 	var msg = 'LGTV connected';
-  client.publish(MQTT_NODEDOMOLOG, msg);
+  client.publish(MQTT_NODE_DOMO_LOG, msg);
   console.log(msg);
   
   lgtv.subscribe('ssap://audio/getVolume', function (err, res) {
       if (res.changed.indexOf('volume') !== -1) { 
         msg = 'volume changed '+ res.volume;
-        client.publish(MQTT_NODEDOMOLOG, msg);
+        client.publish(MQTT_NODE_DOMO_LOG, msg);
       }
       if (res.changed.indexOf('muted') !== -1) { 
         msg = 'mute changed '+ res.muted;
-        client.publish(MQTT_NODEDOMOLOG, msg);
+        client.publish(MQTT_NODE_DOMO_LOG, msg);
       }
   });
 });
 
 lgtv.on('close', function () {
 	var msg = 'LGTV disconnected';
-  client.publish(MQTT_NODEDOMOLOG, msg);
+  client.publish(MQTT_NODE_DOMO_LOG, msg);
   console.log(msg);
 });
 

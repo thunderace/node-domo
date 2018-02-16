@@ -3,20 +3,28 @@ var fs = require('fs');
 var configdomo = {};
 var mapStatus = new Map();
 var lastMessages = [];
+var versionMsg;
+
+const MQTT_NODE_DOMO_INV_CMD = 'home/domo/inventory/cmd';
+
+const CMD_VERSION = "version";
+const CMD_INVENTORY = "inventory";
 
 // mqtt
-const MQTT_NODEDOMOLOG = 'home/domo/log/nodedomo';
+const MQTT_NODE_DOMO_LOG = 'home/domo/log/nodedomo';
 var client;
 
-function init(configFileName, mqttClient) {
+function init(configFileName, mqttClient, pVersionMsg) {
   configdomo = {};    
   client = mqttClient;
+  versionMsg = pVersionMsg;
   initConfigDomo(configFileName);
+  doInventory();
 }
 
 function logMqtt(msg) {  
   if (client) {
-    client.publish(MQTT_NODEDOMOLOG, msg); 
+    client.publish(MQTT_NODE_DOMO_LOG, msg); 
   } else {
     console.log("ERROR: client is null");
   }
@@ -148,13 +156,17 @@ function toggleStatus(id) {
 	return v;
 }
 
+function getMapStatus() { 
+  return mapStatus;
+}
+
 // Commands
 function runCommand(command, logMqtt=true) {
 	try {
 		if (command == undefined || command == null) { return; }
     
     if (logMqtt) { 
-      client.publish(MQTT_NODEDOMOLOG, "Exec command: "+command.id); 
+      client.publish(MQTT_NODE_DOMO_LOG, "Exec command: "+command.id); 
     }
     
     if (command.setStatus!=undefined) {
@@ -166,11 +178,20 @@ function runCommand(command, logMqtt=true) {
       
 		if (command.type == "cmdCommand") {
 			console.log("cmdCommand "+command.id);
-			var macro = findCommand(command.id);
-			if (macro != null) {
-				runCommand(macro, false);
+			var configCommand = findCommand(command.id);
+			if (configCommand != null) {
+				runCommand(configCommand, false);
 			} else {
-				console.log("cmdCommand error: macro not found");
+        
+        if (command.id == CMD_VERSION) {
+          client.publish(MQTT_NODE_DOMO_LOG, versionMsg);
+        }
+        else if (command.id == CMD_INVENTORY) {
+          doInventory();
+        }
+        else {
+				  console.log("cmdCommand error: command not found");
+        }
 			}
 		}
     
@@ -216,10 +237,35 @@ function runCommands(commands) {
 	}	
 }
 
-function getMapStatus() { 
-  return mapStatus;
+
+// Inventory
+var mapDevices = new Map();
+
+function setDevice(id, value) {
+	mapDevices.set(id, value); 
+  console.log(">> Device ["+id+"]="+JSON.stringify(value));
 }
-  
+
+function getDevice(id) {
+	return mapDevices.get(id);
+}
+
+function getMapDevices() { 
+  return mapDevices;
+}
+
+function saveInventory(inventory) {
+  console.log(">> saveInventory "+JSON.stringify(inventory)+" id="+inventory.id);
+  if (inventory != undefined && inventory.id != undefined) {
+    setDevice(inventory.id, inventory);
+  }
+}
+
+function doInventory() {
+  mapDevices = new Map();
+  client.publish(MQTT_NODE_DOMO_INV_CMD, "inventory");  
+}
+
 module.exports = {
   init: init,
   initConfigDomo: initConfigDomo,
@@ -229,4 +275,6 @@ module.exports = {
   findMqttTrigger: findMqttTrigger,
   findCommand: findCommand,
   getMapStatus: getMapStatus,
+  getMapDevices: getMapDevices,
+  saveInventory: saveInventory,
 }
