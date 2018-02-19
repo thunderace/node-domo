@@ -83,7 +83,7 @@
       {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "on"}},
       {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "off"}},
       {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "toggle"}, "break": true},
-      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/OTA", "payload": "http://raffault.free.fr/ESPIR.ino.bin"}, "break": true}
+      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/OTA", "payload": "http://draffault.fr:8888/api/res/ard/ESPIR.ino.bin"}, "break": true}
     ]},
     {"type": "device", "label": "SonOff02", "glyphicon": "server", "commands": [
       {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "version"}, "break": true},

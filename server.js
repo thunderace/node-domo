@@ -13,6 +13,8 @@ var app = express();
 var fs = require('fs');
 var moment = require('moment');
 var http = require('http');
+var ip = require("ip");
+var wifiName = require('wifi-name');
 
 var dbService = require('./modules/db.service.js');
 var domoService = require('./modules/domo.service.js');
@@ -44,6 +46,11 @@ const MQTT_NODE_DOMO_INV_RES = 'home/domo/inventory/res'
 //var client = mqtt.connect(MQTT_URL, {clientId: 'NodejsDomoServer'});
 var client = mqtt.connect(MQTT_URL);
 
+var wifiSSID = "-";
+wifiName().then(name => {
+  wifiSSID = name;
+});
+
 client.on('connect', function () {
 	console.log("Connected to mqtt server "+MQTT_URL);
   client.subscribe(MQTT_DOMO+'#');
@@ -74,9 +81,11 @@ client.on('message', function (topic, message) {
 		console.log("MQTT inventory cmd");
     var s = '{';
     s += '"id": "'+serverId+'", ';
-    s += '"version": "'+VERSION+'", ';
-    s += '"mqttUrl": "'+MQTT_NODE_DOMO_CMD+'", ';
     s += '"status": "OK", ';
+    s += '"version": "'+VERSION+'", ';
+    s += '"WIFI": "'+wifiSSID+'", ';
+    s += '"IP": "'+ip.address()+'", ';
+    s += '"mqttUrl": "'+MQTT_NODE_DOMO_CMD+'", ';
     s += '"commands": [';
     s += '{"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "version"}},';
     s += '{"type":"command", "label": "Inventaire", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "inventory"}}';
@@ -303,7 +312,16 @@ app.get("/api/mesure", function(req, res) {
 // api devices
 // draffault.fr:8888/api/devices
 app.get("/api/devices", function(req, res, next) {
-  var r = JSON.stringify([...domoService.getMapDevices().entries()]); 
+  var arrDevices = [];
+  var arrKeys = Array.from(domoService.getMapDevices().keys());
+  arrKeys.sort();
+  arrKeys.forEach(function(key) {
+    arrDevices.push(domoService.getMapDevices().get(key));
+    console.log(">>"+key);
+  });
+  console.log(arrDevices);
+//  var r = JSON.stringify([...domoService.getMapDevices().entries()]); 
+  var r = JSON.stringify(arrDevices); 
   res.send(r);
 });
 
