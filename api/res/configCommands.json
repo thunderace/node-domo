@@ -79,25 +79,25 @@
       {"type":"command", "label": "5", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "hdmi.5"}, "break": true}
     ]},
     {"type": "device", "label": "SonOff01", "glyphicon": "server", "commands": [
-      {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "version"}, "break": true},
-      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "on"}},
-      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "off"}},
-      {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "toggle"}, "break": true},
+      {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "sonoff01.version"}, "break": true},
+      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "sonoff01.on"}},
+      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "sonoff01.off"}},
+      {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/cmd", "payload": "sonoff01.toggle"}, "break": true},
       {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff01/OTA", "payload": "http://draffault.fr:8888/api/res/ard/ESPIR.ino.bin"}, "break": true}
     ]},
     {"type": "device", "label": "SonOff02", "glyphicon": "server", "commands": [
-      {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "version"}, "break": true},
-      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "on"}},
-      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "off"}},
-      {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "toggle"}, "break": true},
-      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/OTA", "payload": "http://raffault.free.fr/ESPIR.ino.bin"}, "break": true}
+      {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "sonoff02.version"}, "break": true},
+      {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "sonoff02.on"}},
+      {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "sonoff02.off"}},
+      {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/cmd", "payload": "sonoff02.toggle"}, "break": true},
+      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/sonoff02/OTA", "payload": "http://draffault.fr:8888/api/res/ard/ESPIR.ino.bin"}, "break": true}
     ]},
     {"type": "device", "label": "ESPIR01", "glyphicon": "server", "commands": [
       {"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "version"}, "break": true},
       {"type":"command", "label": "On", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "on"}},
       {"type":"command", "label": "Off", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "off"}},
       {"type":"command", "label": "Toggle", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/cmd", "payload": "toggle"}, "break": true},
-      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/OTA", "payload": "http://raffault.free.fr/ESPIR.ino.bin"}, "break": true}
+      {"type":"command", "label": "OTA", "command": {"type":"cmdMqtt", "topic": "home/domo/espIR01/OTA", "payload": "http://draffault.fr:8888/api/res/ard/ESPIR.ino.bin"}, "break": true}
     ]}
   ]
 }

@@ -28,7 +28,6 @@ const CONFIG_FILENAME = "configNodejsDomo.json"
 
 console.log(versionMsg);
 
-
 // MQTT ---------------------------------------------
 // 82.66.49.29:1880/mqtt?topic=home/domo/nodedomo/cmd&payload=macro.test2
 var mqtt = require('mqtt');
@@ -317,19 +316,14 @@ app.get("/api/devices", function(req, res, next) {
   arrKeys.sort();
   arrKeys.forEach(function(key) {
     arrDevices.push(domoService.getMapDevices().get(key));
-    console.log(">>"+key);
   });
-  console.log(arrDevices);
-//  var r = JSON.stringify([...domoService.getMapDevices().entries()]); 
-  var r = JSON.stringify(arrDevices); 
-  res.send(r);
+  res.send(JSON.stringify(arrDevices));
 });
 
 // App services
 domoService.init(__dirname + "/api/res/" + CONFIG_FILENAME, client, versionMsg);
 telegramService.init(client, domoService);
 lgtvService.init(client);
-
 
 // Server start
 app.listen(8888);
