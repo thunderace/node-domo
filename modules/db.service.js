@@ -1,5 +1,11 @@
 var mysql = require('mysql');
 
+var isLogEnabled = false;
+
+function init(pIsLogEnabled) {
+  isLogEnabled = pIsLogEnabled;    
+}
+
 function getDBConnection(dbName) {
   var connection = mysql.createConnection({
     host     : "localhost",
@@ -10,9 +16,15 @@ function getDBConnection(dbName) {
   return connection;
 }
 
+function log(msg) {
+  if (isLogEnabled) {
+    console.log(msg);
+  }
+}
+
 function getBOFromDB(dbName, boName, fields, req, res, condition) {
   var t1 = Date.now();
-  console.log("Execution getBOFromDB ["+boName+"]");
+  log("Execution getBOFromDB ["+boName+"]");
   var connection = this.getDBConnection(dbName);
   connection.connect();
   var query = "SELECT "+fields+" FROM "+boName;
@@ -27,10 +39,10 @@ function getBOFromDB(dbName, boName, fields, req, res, condition) {
       var t3 = Date.now();
       var dt2 = t3-t2;
       var dt3 = t3-t1;
-      console.log("Execution requete ["+query+"] ok (total = "+dt3+" ms, requête en "+dt1+" ms)");
+      log("Execution requete ["+query+"] ok (total = "+dt3+" ms, requête en "+dt1+" ms)");
     }
     else {
-      console.log("Erreur execution requete ["+query+"]");
+      log("Erreur execution requete ["+query+"]");
       res.send(); 
     }
   });
@@ -39,7 +51,7 @@ function getBOFromDB(dbName, boName, fields, req, res, condition) {
 
 function execDBQuery(dbName, query, req, res) {
   var t1 = Date.now();
-  console.log("Execution execDBQuery ["+query+"]");
+  log("Execution execDBQuery ["+query+"]");
   var connection = this.getDBConnection(dbName);
   connection.connect();
 
@@ -53,10 +65,10 @@ function execDBQuery(dbName, query, req, res) {
       var t3 = Date.now();
       var dt2 = t3-t2;
       var dt3 = t3-t1;
-      console.log("Execution requete ["+query+"] ok (total = "+dt3+" ms, requête en "+dt1+" ms)");
+      log("Execution requete ["+query+"] ok (total = "+dt3+" ms, requête en "+dt1+" ms)");
     }
     else {
-      console.log("Erreur execution requete ["+query+"]");
+      log("Erreur execution requete ["+query+"]");
       if (!res && res!=null) {
         res.send();
       }      
@@ -66,6 +78,7 @@ function execDBQuery(dbName, query, req, res) {
 }
 
 module.exports = {
+  init: init,
   getDBConnection: getDBConnection,
   getBOFromDB: getBOFromDB,
   execDBQuery: execDBQuery,

@@ -1,9 +1,13 @@
 var fs = require('fs');
+var http = require('http');
+var unirest = require('unirest');
 
 var configdomo = {};
 var mapStatus = new Map();
 var lastMessages = [];
 var versionMsg;
+
+var isLogEnabled = false;
 
 const MQTT_NODE_DOMO_INV_CMD = 'home/domo/inventory/cmd';
 
@@ -14,7 +18,14 @@ const CMD_INVENTORY = "inventory";
 const MQTT_NODE_DOMO_LOG = 'home/domo/log/nodedomo';
 var client;
 
-function init(configFileName, mqttClient, pVersionMsg) {
+function log(msg) {
+  if (isLogEnabled) {
+    console.log(msg);
+  }
+}
+
+function init(configFileName, mqttClient, pVersionMsg, pIsLogEnabled) {
+  isLogEnabled = pIsLogEnabled;
   configdomo = {};    
   client = mqttClient;
   versionMsg = pVersionMsg;
@@ -255,9 +266,22 @@ function getMapDevices() {
 }
 
 function saveInventory(inventory) {
-  console.log(">> saveInventory "+JSON.stringify(inventory)+" id="+inventory.id);
+//  console.log(">> saveInventory "+JSON.stringify(inventory)+" id="+inventory.id);
   if (inventory != undefined && inventory.id != undefined) {
     setDevice(inventory.id, inventory);
+    if (inventory.wsUrl != undefined && inventory.invWS != undefined) {
+      var wsInv = "http://"+inventory.wsUrl+inventory.invWS;
+      if (wsInv.indexOf("://")==-1) {
+        wsInv+="http://";
+      }
+      console.log(">> call inventory ws:"+wsInv);
+      
+      unirest.get(wsInv).end(function (response) {
+        console.log(response.body);
+        var inventory1 = JSON.parse(response.body);
+        setDevice(inventory1.id, inventory1);
+      });
+    }
   }
 }
 

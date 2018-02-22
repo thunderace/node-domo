@@ -28,6 +28,9 @@ const CONFIG_FILENAME = "configNodejsDomo.json"
 
 console.log(versionMsg);
 
+var isLogEnabled = false;
+var isMqttLogEnabled = false;
+
 // MQTT ---------------------------------------------
 // 82.66.49.29:1880/mqtt?topic=home/domo/nodedomo/cmd&payload=macro.test2
 var mqtt = require('mqtt');
@@ -58,7 +61,9 @@ client.on('connect', function () {
  
 client.on('message', function (topic, message) {
 	if (message.toString().lastIndexOf('wdmqtt')>=0) { return; }
-  console.log("MQTT "+topic.toString() + " "+ message.toString());
+  if (isMqttLogEnabled) {
+    console.log("MQTT "+topic.toString() + " "+ message.toString());
+  }
   
   // bdd log
   var query = "INSERT INTO `domo`.`mqtt` (`topic`,`payload`) VALUES ('"+topic.toString()+"', '"+message.toString()+"');";
@@ -94,7 +99,7 @@ client.on('message', function (topic, message) {
 		return;
 	}
 	if (topic.toString().indexOf(MQTT_NODE_DOMO_INV_RES)>=0) { 
-		console.log("MQTT inventory response" + message.toString());
+//		console.log("MQTT inventory response: " + message.toString());
     domoService.saveInventory(JSON.parse(message.toString()));
 		return;
 	}
@@ -321,7 +326,8 @@ app.get("/api/devices", function(req, res, next) {
 });
 
 // App services
-domoService.init(__dirname + "/api/res/" + CONFIG_FILENAME, client, versionMsg);
+dbService.init(isLogEnabled);
+domoService.init(__dirname + "/api/res/" + CONFIG_FILENAME, client, versionMsg, isLogEnabled);
 telegramService.init(client, domoService);
 lgtvService.init(client);
 
