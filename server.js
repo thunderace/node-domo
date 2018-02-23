@@ -22,9 +22,9 @@ var telegramService = require('./modules/telegram.service.js');
 var lgtvService = require('./modules/lgtv.service.js');
 
 var serverId = "node-domo-server-"+new Date().getTime(); 
-const VERSION = '23/02/2018 12:16'
-var versionMsg = 'Serveur '+serverId+' '+VERSION
-const CONFIG_FILENAME = "configNodejsDomo.json"
+const VERSION = '23/02/2018 12:16';
+var versionMsg = 'Serveur '+serverId+' '+VERSION;
+const CONFIG_FILENAME = "configNodejsDomo.json";
 
 console.log(versionMsg);
 
