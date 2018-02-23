@@ -59,8 +59,8 @@ function loadConfigDomo(configFileName) {
       var msg;
       try {
         configdomo = JSON.parse(data);
-        msg = "Config loading from " + configFileName+" version "+configdomo.version;
-      } catch(ex) {
+        msg = "Config loading from " + configFileName + " version " + configdomo.version;
+      } catch (ex) {
         msg = "Error parsing config file from " + configFileName;
       }
       logMqtt(msg);
@@ -72,7 +72,7 @@ function loadConfigDomo(configFileName) {
 // Find a command by id
 function findCommandInCategory(id, category) {
 	if (category.commandCategories != undefined) {
-		for(var ic=0; ic<category.commandCategories.length; ic++) {
+		for (var ic = 0; ic < category.commandCategories.length; ic++) {
 			var category1 = category.commandCategories[ic];
 			var command = findCommandInCategory(id, category1);
 			if (command != null) {
@@ -81,7 +81,7 @@ function findCommandInCategory(id, category) {
 		}
 	}
 	if (category.commands != undefined) {
-		for(var i=0; i<category.commands.length; i++) {
+		for (var i = 0; i < category.commands.length; i++) {
 			if (category.commands[i].id == id) {
 					return category.commands[i];
 			}
@@ -92,7 +92,7 @@ function findCommandInCategory(id, category) {
 
 function findCommand(id) {
 	if (configdomo.commandCategories != undefined) {
-		for(var ic=0; ic<configdomo.commandCategories.length; ic++) {
+		for (var ic = 0; ic < configdomo.commandCategories.length; ic++) {
 			var category = configdomo.commandCategories[ic];
 			var command = findCommandInCategory(id, category);
 			if (command != null) {
@@ -108,30 +108,32 @@ function findMqttTrigger(topic, payload) {
   var trigger = null;
   var t1 = Date.now();
   var i = payload.toString().indexOf(" FreeMem");
-	if (i>=0) { 
+	if (i >= 0) { 
     payload = payload.substring(0, i);
   }
 
 	if (configdomo && configdomo.triggers != undefined) {
 		var payload1 = payload.replace(/\"/g, "'");
-		for(var i=0; i<configdomo.triggers.length; i++) {
+		for (var i = 0; i < configdomo.triggers.length; i++) {
 			if ((topic == null || configdomo.triggers[i].topic == topic)) {
-        if (configdomo.triggers[i].payload == "*" || configdomo.triggers[i].payload == payload || configdomo.triggers[i].payload == payload1) {
+        if (configdomo.triggers[i].payload == "*" || 
+          configdomo.triggers[i].payload == payload || 
+          configdomo.triggers[i].payload == payload1) {
           trigger = configdomo.triggers[i];
-			    console.log(">> trigger found: ["+trigger.command.id+"]");
+			    console.log(">> trigger found: [" + trigger.command.id + "]");
           
           // Debounce. Attention ! debounce not working for trigger.payload = "*"
-          if (lastMessages.length>0) { // && trigger.debounce
-            for(var j=0;j<lastMessages.length && trigger;j++) {
+          if (lastMessages.length > 0) { // && trigger.debounce
+            for (var j = 0;j < lastMessages.length && trigger; j++) {
               var lastMessage = lastMessages[j];
               if (lastMessage.message.topic == topic && lastMessage.message.payload == payload) {
-                var t = t1-lastMessage.date;
+                var t = t1 - lastMessage.date;
                 if (trigger.debounce) {
-                  if (t<trigger.debounce) {
-                    console.log(">> debounce on: delta last cmd="+t+"ms");
+                  if (t < trigger.debounce) {
+                    console.log(">> debounce on: delta last cmd=" + t + "ms");
                     trigger = null;
                   } else { 
-                    console.log(">> debounce off: delta last cmd="+t+"ms");
+                    console.log(">> debounce off: delta last cmd=" + t + "ms");
                   }    
                 } else { 
                   console.log(">> no trigger debounce");
@@ -143,7 +145,7 @@ function findMqttTrigger(topic, payload) {
 			}
 		}
 	}
-  while (lastMessages.length>30) {
+  while (lastMessages.length > 30) {
     lastMessages.shift();
   }
   lastMessages.push({ "message": { "topic": topic, "payload": payload }, "date": t1 });
@@ -153,7 +155,6 @@ function findMqttTrigger(topic, payload) {
 // Statuses
 function setStatus(id, value) {
 	mapStatus.set(id, value); 
-  var msg = "setStatus "+id+"="+value;
 }
 
 function getStatus(id) {
@@ -163,8 +164,8 @@ function getStatus(id) {
 
 function toggleStatus(id) {
 	var v = getStatus(id);
-	if (v == undefined) { v=0; }
-  if (v == 1) { v=0; } else { v=1; }
+	if (v == undefined) { v = 0; }
+  if (v == 1) { v = 0; } else { v = 1; }
   setStatus(id, v);
 	return v;
 }
@@ -174,23 +175,23 @@ function getMapStatus() {
 }
 
 // Commands
-function runCommand(command, logMqtt=true) {
+function runCommand(command, logMqtt = true) {
 	try {
 		if (command == undefined || command == null) { return; }
     
     if (logMqtt) { 
-      client.publish(MQTT_NODE_DOMO_LOG, "Exec command: "+command.id); 
+      client.publish(MQTT_NODE_DOMO_LOG, "Exec command: " + command.id); 
     }
     
-    if (command.setStatus!=undefined) {
-      for(var i=0; i<command.setStatus.length; i++) {
+    if (command.setStatus != undefined) {
+      for (var i = 0; i < command.setStatus.length; i++) {
         var vSetStatus = command.setStatus[i];
         setStatus(vSetStatus.key, vSetStatus.value);
       }	         
     }
       
 		if (command.type == "cmdCommand") {
-			console.log("cmdCommand "+command.id);
+			console.log("cmdCommand " + command.id);
 			var configCommand = findCommand(command.id);
 			if (configCommand != null) {
 				runCommand(configCommand, false);
@@ -204,7 +205,7 @@ function runCommand(command, logMqtt=true) {
         }
         else if (command.id == CMD_REBOOT) {
           client.publish(MQTT_NODE_DOMO_LOG, "domo-node-server rebooting...");
-          var yourscript = exec('sudo pm2 restart /var/www/node-domo/server.js', (error, stdout, stderr) => {
+          exec('sudo pm2 restart /var/www/node-domo/server.js', (error, stdout, stderr) => {
             console.log(`${stdout}`);
             console.log(`${stderr}`);
             if (error !== null) {
@@ -225,21 +226,21 @@ function runCommand(command, logMqtt=true) {
 		}
     
 		if (command.type == "cmdMqtt") {
-			console.log("cmdMqtt "+command.topic+" "+command.payload);
+			console.log("cmdMqtt " + command.topic + " " + command.payload);
 			client.publish(command.topic, command.payload);
       return;
 		}
     
 		if (command.type == "cmdWait") {
-			console.log("cmdWait "+command.duration);
+			console.log("cmdWait " + command.duration);
 			var waitTill = new Date(new Date().getTime() + command.duration);
-			while(waitTill > new Date()){}
+			while (waitTill > new Date()) {}
 		}
 
 		if (command.type == "cmdToggle") {
-			console.log("cmdToggle "+command.id);
+			console.log("cmdToggle " + command.id);
       var id = command.id;
-      if (command.key!=undefined) { id = command.key; }
+      if (command.key != undefined) { id = command.key; }
 			var v = toggleStatus(id);
 			if (v) {
 				runCommand(command.commandOn);
@@ -247,14 +248,14 @@ function runCommand(command, logMqtt=true) {
 				runCommand(command.commandOff);
 			}
 		}
-	} catch(ex) {
-		console.log("Exception (runCommand) "+ex);
+	} catch (ex) {
+		console.log("Exception (runCommand) " + ex);
 	}
 }
 
 function runCommands(commands) {
 	if (commands == undefined) { return; }
-  for(var i=0; i<commands.length; i++) {
+  for (var i = 0; i < commands.length; i++) {
 		var command = commands[i];
 		runCommand(command);
 	}	
@@ -266,7 +267,7 @@ var mapDevices = new Map();
 
 function setDevice(id, value) {
 	mapDevices.set(id, value); 
-  console.log(">> Device ["+id+"]="+JSON.stringify(value));
+  console.log(">> Device [" + id + "]=" + JSON.stringify(value));
 }
 
 function getDevice(id) {
@@ -282,11 +283,11 @@ function saveInventory(inventory) {
   if (inventory != undefined && inventory.id != undefined) {
     setDevice(inventory.id, inventory);
     if (inventory.wsUrl != undefined && inventory.invWS != undefined) {
-      var wsInv = "http://"+inventory.wsUrl+inventory.invWS;
-      if (wsInv.indexOf("://")==-1) {
-        wsInv+="http://";
+      var wsInv = "http://" + inventory.wsUrl + inventory.invWS;
+      if (wsInv.indexOf("://") == -1) {
+        wsInv += "http://";
       }
-      console.log(">> call inventory ws:"+wsInv);
+      console.log(">> call inventory ws:" + wsInv);
       
       unirest.get(wsInv).end(function (response) {
         try {
@@ -294,8 +295,8 @@ function saveInventory(inventory) {
           var inventory1 = JSON.parse(response.body);
           setDevice(inventory1.id, inventory1);
         }
-        catch(ex) {
-          console.log("Exception "+ex);
+        catch (ex) {
+          console.log("Exception " + ex);
         }
       });
     }
