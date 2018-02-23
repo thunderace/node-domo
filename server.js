@@ -31,6 +31,7 @@ console.log(versionMsg);
 var isLogEnabled = false;
 var isMqttLogEnabled = false;
 
+
 // MQTT ---------------------------------------------
 // 82.66.49.29:1880/mqtt?topic=home/domo/nodedomo/cmd&payload=macro.test2
 var mqtt = require('mqtt');
