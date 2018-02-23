@@ -1,6 +1,7 @@
 var fs = require('fs');
 var http = require('http');
 var unirest = require('unirest');
+var exec = require('child_process').exec;
 
 var configdomo = {};
 var mapStatus = new Map();
@@ -13,6 +14,7 @@ const MQTT_NODE_DOMO_INV_CMD = 'home/domo/inventory/cmd';
 
 const CMD_VERSION = "version";
 const CMD_INVENTORY = "inventory";
+const CMD_REBOOT = "reboot";
 
 // mqtt
 const MQTT_NODE_DOMO_LOG = 'home/domo/log/nodedomo';
@@ -200,6 +202,16 @@ function runCommand(command, logMqtt=true) {
         else if (command.id == CMD_INVENTORY) {
           doInventory();
         }
+        else if (command.id == CMD_REBOOT) {
+          client.publish(MQTT_NODE_DOMO_LOG, "domo-node-server rebooting...");
+          var yourscript = exec('sudo pm2 restart /var/www/node-domo/server.js', (error, stdout, stderr) => {
+            console.log(`${stdout}`);
+            console.log(`${stderr}`);
+            if (error !== null) {
+                console.log(`exec error: ${error}`);
+            }
+          });
+        }        
         else {
 				  console.log("cmdCommand error: command not found");
         }
@@ -277,9 +289,14 @@ function saveInventory(inventory) {
       console.log(">> call inventory ws:"+wsInv);
       
       unirest.get(wsInv).end(function (response) {
-        console.log(response.body);
-        var inventory1 = JSON.parse(response.body);
-        setDevice(inventory1.id, inventory1);
+        try {
+          console.log(response.body);
+          var inventory1 = JSON.parse(response.body);
+          setDevice(inventory1.id, inventory1);
+        }
+        catch(ex) {
+          console.log("Exception "+ex);
+        }
       });
     }
   }

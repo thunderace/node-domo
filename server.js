@@ -22,7 +22,7 @@ var telegramService = require('./modules/telegram.service.js');
 var lgtvService = require('./modules/lgtv.service.js');
 
 var serverId = "node-domo-server-"+new Date().getTime(); 
-const VERSION = '29/01/2018 16:20'
+const VERSION = '23/02/2018 12:16'
 var versionMsg = 'Serveur '+serverId+' '+VERSION
 const CONFIG_FILENAME = "configNodejsDomo.json"
 
@@ -92,6 +92,7 @@ client.on('message', function (topic, message) {
     s += '"mqttUrl": "'+MQTT_NODE_DOMO_CMD+'", ';
     s += '"commands": [';
     s += '{"type":"command", "label": "Version", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "version"}},';
+    s += '{"type":"command", "label": "Reboot", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "reboot"}},';
     s += '{"type":"command", "label": "Inventaire", "command": {"type":"cmdMqtt", "topic": "home/domo/nodedomo/cmd", "payload": "inventory"}}';
     s += ']';
     s += '}';
