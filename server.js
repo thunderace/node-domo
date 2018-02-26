@@ -5,7 +5,7 @@ pm2 restart /var/www/node-domo/server.js
 node /var/www/node-domo/server.js
 */
 
-// test 1
+// test 2
 
 "use strict";
 var compression = require('compression');
